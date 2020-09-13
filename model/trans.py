@@ -53,6 +53,7 @@ class Trans:
             "domain":self.domain
         }
         get_base = self.session.post(self.url,data=post_data)
+        #print(get_base.json())
         return get_base.json()
 
 #a = Trans(appid,secretKey)

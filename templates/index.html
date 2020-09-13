@@ -8,48 +8,54 @@
 </head>
 
 <body>
-  <div id="app">
-    <div id="control" class="control">
-      <el-row gutter="20">
-        <el-col :span="12">
-          <el-button>翻译</el-button>
-          <el-select v-model="select_from" clearable placeholder="选择源语言">
-            <el-option v-for="item in fromlang_s" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select v-model="select_to" clearable placeholder="选择目标语言">
-            <el-option v-for="item in tolang_s" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select v-model="select_class" clearable placeholder="选择类别">
-            <el-option v-for="item in class_s" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="6">
-          <el-button>翻译</el-button>
-        </el-col>
-        <el-col :span="6">
-          <el-button>翻译</el-button>
-        </el-col>
-      </el-row>
-    </div>
-    <el-row gutter="20">
-      <el-col :span="12">
-        <div>
-          <el-input type="textarea" v-model="transdata" rows="20" show-word-limit="true"></el-input>
+  <div id="app" style="background-image: url(static/bg.jpg);">
+    <el-card style="margin: 60px 50px 50px 50px;">
+      <div slot="header" class="clearfix">
+        <span>PAA.FUN-专业领域翻译</span>
+        <el-button style="float: right; padding: 3px 0" type="text" icon="el-icon-message" @click="sendmail">反馈</el-button>
+        <a href="mailto:wicos@wicoslcn?subject=PAA.FUN问题反馈" ref="mail" style="display: none;"></a>
+      </div>
+      <div>
+        <div id="control" class="control">
+          <el-row gutter="20">
+            <el-col :span="12">
+              <el-select v-model="select_to" clearable placeholder="选择目标语言">
+                <el-option v-for="item in tolang_s" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+              <el-select v-model="select_class" clearable placeholder="选择类别">
+                <el-option v-for="item in class_s" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="12">
+              <el-button type="success" round @click="fanyi">翻译</el-button>
+            </el-col>
+          </el-row>
         </div>
-      </el-col>
-      <el-col :span="12">
-        <el-input type="textarea" v-model="todata" rows="20" show-word-limit="true"></el-input>
-      </el-col>
-    </el-row>
+        <el-row gutter="20">
+          <el-col :span="12">
+            <div>
+              <el-input type="textarea" v-model="transdata" rows="20" show-word-limit="true" maxlength="5000">
+              </el-input>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <el-input type="textarea" v-model="todata" rows="20" show-word-limit="true"></el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <el-card class="info">
+        Hello
+      </el-card>
+    </el-card>
   </div>
 </body>
 <!-- import Vue before Element -->
 <script src="static/vue.min.js"></script>
 <!-- import JavaScript -->
 <script src="static/index.js"></script>
+<script src="static/axios.js"></script>
 <script>
   new Vue({
     el: '#app',
@@ -58,30 +64,15 @@
         visible: false,
         transdata: "",
         todata: "",
-        select_from: "",
-        fromlang_s: [{
-          value: "auto",
-          label: "自动"
-        },
-        {
-          value: "zh",
-          label: "中文"
-        }, {
-          value: "en",
-          label: "英文"
-        }],
         select_to: "",
-        tolang_s: [{
-          value: "auto",
-          label: "自动"
-        },
-        {
-          value: "zh",
-          label: "中文"
-        }, {
-          value: "en",
-          label: "英文"
-        }],
+        tolang_s: [
+          {
+            value: "zh",
+            label: "中文"
+          }, {
+            value: "en",
+            label: "英文"
+          }],
         select_class: "",
         class_s: [
           {
@@ -93,13 +84,60 @@
           }, {
             value: "mechanics",
             label: "水利机械领域"
-          },{
+          }, {
             value: "medicine",
             label: "生物医药领域"
-          },{
+          }, {
             value: "novel",
             label: "网络文学领域"
           }]
+      }
+    },
+    methods: {
+      check_slect: function () {
+        if (this.select_to == "") {
+          this.$message.error('请务必选择一种目标语言！');
+          return 0
+        }
+        if (this.select_class == "") {
+          this.$message.error('请务必选择翻译领域！');
+          return 0
+        }
+      },
+      check_input: function () {
+        if (this.transdata == "") {
+          this.$message.error('请输入要翻译的内容');
+          return 0
+        } else {
+          //console.log(this.transdata.length);
+          if (this.transdata.length > 4999) {
+            this.$message.error('请输入的翻译内容必须少于5000字！');
+            return 0
+          }
+          return 1
+        }
+      },
+      fanyi: function (res) {
+        let x = this.check_slect()
+        let y = this.check_input()
+        let that = this
+        if (x != 0 && y != 0) {
+          axios.post("/fanyi", data = {
+            q: this.transdata,
+            tolang: this.select_to,
+            fromlang: this.select_from,
+            domain: this.select_class
+          }).then(function (res) {
+            //console.log(res.data);
+            let get_data = res.data
+            //console.log(get_data,typeof(get_data));
+            that.todata = get_data["trans_result"][0]["dst"]
+          })
+
+        }
+      },
+      sendmail:function(res){
+        this.$refs.mail.click()
       }
     }
   })
@@ -108,6 +146,26 @@
 <style>
   .control {
     padding: 20px;
+  }
+
+  #app {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-width: 1000px;
+    z-index: -10;
+    zoom: 1;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: center 0;
+  }
+  .info{
+    margin-top: 40px;
   }
 </style>
 

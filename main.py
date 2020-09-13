@@ -13,12 +13,14 @@
 # here put the import lib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import main
 from starlette.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 from starlette.requests import Request
 from pydantic import BaseModel
 from model import trans
 import json
+import uvicorn
 
 app = FastAPI()
 origins = ["*"]
