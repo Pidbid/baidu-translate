@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="static/index.css">
+</head>
+
+<body>
+  <div id="app">
+    <div id="control" class="control">
+      <el-row gutter="20">
+        <el-col :span="12">
+          <el-button>翻译</el-button>
+          <el-select v-model="select_from" clearable placeholder="选择源语言">
+            <el-option v-for="item in fromlang_s" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select v-model="select_to" clearable placeholder="选择目标语言">
+            <el-option v-for="item in tolang_s" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select v-model="select_class" clearable placeholder="选择类别">
+            <el-option v-for="item in class_s" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="6">
+          <el-button>翻译</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button>翻译</el-button>
+        </el-col>
+      </el-row>
+    </div>
+    <el-row gutter="20">
+      <el-col :span="12">
+        <div>
+          <el-input type="textarea" v-model="transdata" rows="20" show-word-limit="true"></el-input>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <el-input type="textarea" v-model="todata" rows="20" show-word-limit="true"></el-input>
+      </el-col>
+    </el-row>
+  </div>
+</body>
+<!-- import Vue before Element -->
+<script src="static/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="static/index.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        visible: false,
+        transdata: "",
+        todata: "",
+        select_from: "",
+        fromlang_s: [{
+          value: "auto",
+          label: "自动"
+        },
+        {
+          value: "zh",
+          label: "中文"
+        }, {
+          value: "en",
+          label: "英文"
+        }],
+        select_to: "",
+        tolang_s: [{
+          value: "auto",
+          label: "自动"
+        },
+        {
+          value: "zh",
+          label: "中文"
+        }, {
+          value: "en",
+          label: "英文"
+        }],
+        select_class: "",
+        class_s: [
+          {
+            value: "electronics",
+            label: "电子科技领域"
+          }, {
+            value: "finance",
+            label: "金融财经领域"
+          }, {
+            value: "mechanics",
+            label: "水利机械领域"
+          },{
+            value: "medicine",
+            label: "生物医药领域"
+          },{
+            value: "novel",
+            label: "网络文学领域"
+          }]
+      }
+    }
+  })
+</script>
+
+<style>
+  .control {
+    padding: 20px;
+  }
+</style>
+
+</html>

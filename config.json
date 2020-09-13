@@ -1,0 +1,6 @@
+{
+    "fanyi": {
+        "appid": "your appid",
+        "secretKey": "your secretKey"
+    }
+}
